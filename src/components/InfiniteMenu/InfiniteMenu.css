@@ -1,0 +1,175 @@
+#infinite-grid-menu-canvas {
+  cursor: grab;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  outline: none;
+}
+
+#infinite-grid-menu-canvas:active {
+  cursor: grabbing;
+}
+
+/* --- Title Overlay --- */
+.face-title {
+  user-select: none;
+  position: absolute;
+  font-weight: normal;
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  line-height: 1.15;
+  color: var(--color-foreground);
+  pointer-events: none;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  z-index: 10;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Desktop positioning for title */
+@media (min-width: 1024px) {
+  .face-title {
+    left: 8%;
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: 14ch;
+    text-align: left;
+  }
+  .face-title.active {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+  .face-title.inactive {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-20px);
+  }
+}
+
+/* Mobile/Tablet positioning for title */
+@media (max-width: 1023px) {
+  .face-title {
+    left: 50%;
+    top: 15%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    text-align: center;
+  }
+  .face-title.active {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .face-title.inactive {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+}
+
+
+/* --- Description Overlay --- */
+.face-description {
+  user-select: none;
+  position: absolute;
+  font-size: clamp(0.85rem, 1.2vw, 1.05rem);
+  line-height: 1.6;
+  color: var(--color-muted-foreground);
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Desktop positioning for description */
+@media (min-width: 1024px) {
+  .face-description {
+    right: 8%;
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: 28ch;
+    text-align: right;
+  }
+  .face-description.active {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+  .face-description.inactive {
+    opacity: 0;
+    transform: translateY(-50%) translateX(20px);
+  }
+}
+
+/* Mobile/Tablet positioning for description */
+@media (max-width: 1023px) {
+  .face-description {
+    left: 50%;
+    bottom: 24%;
+    transform: translate(-50%, 50%);
+    max-width: 80%;
+    text-align: center;
+  }
+  .face-description.active {
+    opacity: 1;
+    transform: translate(-50%, 50%) translateY(0);
+  }
+  .face-description.inactive {
+    opacity: 0;
+    transform: translate(-50%, 50%) translateY(10px);
+  }
+}
+
+
+/* --- Action Button --- */
+.action-button {
+  position: absolute;
+  left: 50%;
+  z-index: 10;
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              background 0.3s ease, 
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+.action-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateX(-50%) scale(1.08) rotate(45deg);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 
+              0 0 25px rgba(255, 255, 255, 0.15), 
+              0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.action-button:active {
+  transform: translateX(-50%) scale(0.96) rotate(45deg);
+}
+
+.action-button-icon {
+  user-select: none;
+  position: relative;
+  color: var(--color-foreground);
+  top: 1px;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.action-button.active {
+  bottom: 12%;
+  transform: translateX(-50%) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.action-button.inactive {
+  bottom: 8%;
+  transform: translateX(-50%) scale(0.5);
+  opacity: 0;
+  pointer-events: none;
+}
