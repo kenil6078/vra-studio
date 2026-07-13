@@ -6,6 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import GridDistortion from '../components/GridDistortion/GridDistortion'
 import InfiniteMenu from '../components/InfiniteMenu/InfiniteMenu'
 import HorizontalStory from '../components/HorizontalStory/HorizontalStory'
+import TypographyStoryScroll from '../components/Typography/TypographyStory'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -217,6 +218,8 @@ const Home = () => {
         </div>
       </section>
 
+      <TypographyStoryScroll />
+
       {/* Section 2: Sticky Zoom-Through Transition */}
       <div className="zoom-sticky-wrapper">
         <div className="zoom-sticky-container">
@@ -261,6 +264,10 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      
+      {/* Cinematic Horizontal Storytelling */}
+      <HorizontalStory />
 
       {/* Section 4: Philosophy & Media Grid */}
       <section className="philosophy-section py-32 px-4 sm:px-6 md:px-8 relative z-10 bg-transparent">
@@ -341,6 +348,7 @@ const Home = () => {
         </div>
       </section>
 
+ 
       {/* Section 5: Journal Showcase */}
       <section className="journal-section py-32 px-4 sm:px-6 md:px-8 relative z-10 bg-transparent">
         <div className="max-w-5xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -368,9 +376,8 @@ const Home = () => {
           </div>
         </div>
       </section>
+      
 
-      {/* Cinematic Horizontal Storytelling */}
-      <HorizontalStory />
 
     </div>
   )
