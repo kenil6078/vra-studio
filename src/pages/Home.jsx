@@ -1,48 +1,49 @@
-import React, { useLayoutEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
-import gsap from 'gsap'
-import { useTransitionContext } from '../components/Transition/TransitionContext'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import GridDistortion from '../components/GridDistortion/GridDistortion'
-import InfiniteMenu from '../components/InfiniteMenu/InfiniteMenu'
-import HorizontalStory from '../components/HorizontalStory/HorizontalStory'
-import TypographyStoryScroll from '../components/Typography/TypographyStory'
+import React, { useLayoutEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import gsap from "gsap";
+import { useTransitionContext } from "../components/Transition/TransitionContext";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import GridDistortion from "../components/GridDistortion/GridDistortion";
+import InfiniteMenu from "../components/InfiniteMenu/InfiniteMenu";
+import HorizontalStory from "../components/HorizontalStory/HorizontalStory";
+import TypographyStoryScroll from "../components/Typography/TypographyStory";
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger);
 
 const journalItems = [
   {
-    image: 'https://picsum.photos/600/600?grayscale&random=1',
-    link: '/journal',
-    title: 'The Art of Silence',
-    description: 'Minimizing cognitive load in interface design.'
+    image: "https://picsum.photos/600/600?grayscale&random=1",
+    link: "/journal",
+    title: "The Art of Silence",
+    description: "Minimizing cognitive load in interface design.",
   },
   {
-    image: 'https://picsum.photos/600/600?grayscale&random=2',
-    link: '/journal',
-    title: 'WebGL Physics & Attention',
-    description: 'Finding the balance in interactive motion.'
+    image: "https://picsum.photos/600/600?grayscale&random=2",
+    link: "/journal",
+    title: "WebGL Physics & Attention",
+    description: "Finding the balance in interactive motion.",
   },
   {
-    image: 'https://picsum.photos/600/600?grayscale&random=3',
-    link: '/journal',
-    title: 'Beyond the Flat Screen',
-    description: 'How spatial interfaces shape creative concentration.'
-  }
-]
+    image: "https://picsum.photos/600/600?grayscale&random=3",
+    link: "/journal",
+    title: "Beyond the Flat Screen",
+    description: "How spatial interfaces shape creative concentration.",
+  },
+];
 
 const Home = () => {
-  const navigate = useNavigate()
-  const { triggerTransition } = useTransitionContext()
-  const mainRef = useRef(null)
-  const textRef = useRef(null)
-  const revealRef = useRef(null)
+  const navigate = useNavigate();
+  const { triggerTransition } = useTransitionContext();
+  const mainRef = useRef(null);
+  const textRef = useRef(null);
+  const revealRef = useRef(null);
 
-  const titleText = "Where dreams rise through the silence."
-  const titleWords = titleText.split(' ')
+  const titleText = "Where dreams rise through the silence.";
+  const titleWords = titleText.split(" ");
 
-  const subText = "We're designing tools for deep thinkers, bold creators, and quiet rebels. Amid the chaos, we build digital spaces for sharp focus and inspired work."
-  const subTextWords = subText.split(' ')
+  const subText =
+    "We're designing tools for deep thinkers, bold creators, and quiet rebels. Amid the chaos, we build digital spaces for sharp focus and inspired work.";
+  const subTextWords = subText.split(" ");
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -53,8 +54,8 @@ const Home = () => {
         rotate: 3,
         stagger: 0.08,
         duration: 1.2,
-        ease: "power4.out"
-      })
+        ease: "power4.out",
+      });
 
       gsap.from(".hero-sub-word", {
         opacity: 0,
@@ -62,51 +63,59 @@ const Home = () => {
         stagger: 0.012,
         duration: 0.8,
         delay: 0.4,
-        ease: "power3.out"
-      })
+        ease: "power3.out",
+      });
 
       gsap.from(".hero-cta", {
         opacity: 0,
         y: 20,
         delay: 1.0,
         duration: 0.8,
-        ease: "power3.out"
-      })
+        ease: "power3.out",
+      });
 
       // 2. Hero Text Scroll-Linked Exit Mask Effect (Slides Up/Away on scroll)
-      gsap.fromTo(".hero-word", {
-        y: "0%",
-        rotate: 0,
-        opacity: 1
-      }, {
-        scrollTrigger: {
-          trigger: ".hero-section",
-          start: "top top",
-          end: "bottom 30%",
-          scrub: true,
+      gsap.fromTo(
+        ".hero-word",
+        {
+          y: "0%",
+          rotate: 0,
+          opacity: 1,
         },
-        y: "-110%",
-        rotate: -3,
-        opacity: 0,
-        ease: "none",
-        immediateRender: false
-      })
+        {
+          scrollTrigger: {
+            trigger: ".hero-section",
+            start: "top top",
+            end: "bottom 30%",
+            scrub: true,
+          },
+          y: "-110%",
+          rotate: -3,
+          opacity: 0,
+          ease: "none",
+          immediateRender: false,
+        },
+      );
 
-      gsap.fromTo(".hero-sub-word", {
-        y: "0%",
-        opacity: 1
-      }, {
-        scrollTrigger: {
-          trigger: ".hero-section",
-          start: "top top",
-          end: "bottom 30%",
-          scrub: true,
+      gsap.fromTo(
+        ".hero-sub-word",
+        {
+          y: "0%",
+          opacity: 1,
         },
-        y: "-110%",
-        opacity: 0,
-        ease: "none",
-        immediateRender: false
-      })
+        {
+          scrollTrigger: {
+            trigger: ".hero-section",
+            start: "top top",
+            end: "bottom 30%",
+            scrub: true,
+          },
+          y: "-110%",
+          opacity: 0,
+          ease: "none",
+          immediateRender: false,
+        },
+      );
 
       // 3. Sticky Scroll-tied Zoom text & Clip-Path reveal
       const tl = gsap.timeline({
@@ -117,32 +126,42 @@ const Home = () => {
           scrub: 1.5,
           pin: true,
           anticipatePin: 1,
-        }
-      })
+        },
+      });
 
-      tl.fromTo(textRef.current, {
-        scale: 1,
-        opacity: 1
-      }, {
-        scale: 75,
-        opacity: 0,
-        ease: "power2.inOut",
-        immediateRender: false
-      }, 0)
+      tl.fromTo(
+        textRef.current,
+        {
+          scale: 1,
+          opacity: 1,
+        },
+        {
+          scale: 75,
+          opacity: 0,
+          ease: "power2.inOut",
+          immediateRender: false,
+        },
+        0,
+      );
 
-      tl.fromTo(revealRef.current, {
-        clipPath: "circle(0% at 50% 50%)"
-      }, {
-        clipPath: "circle(120% at 50% 50%)",
-        ease: "power2.inOut",
-        immediateRender: false,
-        onUpdate: function () {
-          if (revealRef.current) {
-            // Force redraw on every frame to solve browser clip-path reverse scroll repaint glitches
-            revealRef.current.style.transform = 'translate3d(0, 0, 0.1px)';
-          }
-        }
-      }, 0)
+      tl.fromTo(
+        revealRef.current,
+        {
+          clipPath: "circle(0% at 50% 50%)",
+        },
+        {
+          clipPath: "circle(120% at 50% 50%)",
+          ease: "power2.inOut",
+          immediateRender: false,
+          onUpdate: function () {
+            if (revealRef.current) {
+              // Force redraw on every frame to solve browser clip-path reverse scroll repaint glitches
+              revealRef.current.style.transform = "translate3d(0, 0, 0.1px)";
+            }
+          },
+        },
+        0,
+      );
 
       // 4. Stagger philosophy grid elements (both text & images)
       gsap.from(".philosophy-item", {
@@ -154,8 +173,8 @@ const Home = () => {
         y: 50,
         stagger: 0.1,
         duration: 1,
-        ease: "power3.out"
-      })
+        ease: "power3.out",
+      });
 
       // 5. Stagger journal showcase
       gsap.from(".journal-showcase-container", {
@@ -166,23 +185,27 @@ const Home = () => {
         opacity: 0,
         y: 30,
         duration: 1,
-        ease: "power3.out"
-      })
+        ease: "power3.out",
+      });
+    }, mainRef);
 
-    }, mainRef)
-
-    return () => ctx.revert()
-  }, [])
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <div ref={mainRef} className="relative w-full min-h-screen overflow-x-hidden bg-black/10">
-
+    <div
+      ref={mainRef}
+      className="relative w-full min-h-screen overflow-x-hidden bg-black/10"
+    >
       {/* Section 1: Hero Section */}
       <section className="hero-section relative min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8">
         <div className="relative z-10 flex flex-col items-center justify-center text-center max-w-7xl mx-auto pt-32 pb-32">
           <h1 className="text-5xl sm:text-7xl md:text-8xl font-normal leading-[0.95] tracking-[-2.46px] text-foreground font-display">
             {titleWords.map((word, index) => (
-              <span key={index} className="inline-block overflow-hidden mr-3 md:mr-4 py-1">
+              <span
+                key={index}
+                className="inline-block overflow-hidden mr-3 md:mr-4 py-1"
+              >
                 <span className="hero-word inline-block origin-bottom-left">
                   {word === "dreams" || word === "silence." ? (
                     <em className="not-italic text-muted-foreground">{word}</em>
@@ -196,7 +219,10 @@ const Home = () => {
 
           <p className="hero-sub text-muted-foreground text-base sm:text-lg max-w-2xl mt-8 leading-relaxed">
             {subTextWords.map((word, index) => (
-              <span key={index} className="inline-block overflow-hidden mr-1.5 py-0.5">
+              <span
+                key={index}
+                className="inline-block overflow-hidden mr-1.5 py-0.5"
+              >
                 <span className="hero-sub-word inline-block origin-bottom-left">
                   {word}
                 </span>
@@ -237,13 +263,16 @@ const Home = () => {
                   </span>
                   <h2 className="text-3xl sm:text-4xl md:text-5xl font-normal leading-[1.0] tracking-tight font-display text-foreground">
                     Bending reality in <br />
-                    <em className="not-italic text-muted-foreground">real-time.</em>
+                    <em className="not-italic text-muted-foreground">
+                      real-time.
+                    </em>
                   </h2>
                   <p className="text-muted-foreground text-sm leading-relaxed max-w-sm">
-                    Move your cursor over the screen to bend space. We forge WebGL frameworks that respect the physics of interaction.
+                    Move your cursor over the screen to bend space. We forge
+                    WebGL frameworks that respect the physics of interaction.
                   </p>
                   <button
-                    onClick={() => triggerTransition('/studio')}
+                    onClick={() => triggerTransition("/studio")}
                     className="liquid-glass rounded-full px-8 py-3.5 text-xs uppercase tracking-widest text-foreground hover:scale-[1.05] active:scale-[0.98] transition-all duration-300 cursor-pointer inline-block"
                   >
                     Enter Studio
@@ -265,7 +294,6 @@ const Home = () => {
         </div>
       </div>
 
-      
       {/* Cinematic Horizontal Storytelling */}
       <HorizontalStory />
 
@@ -277,7 +305,8 @@ const Home = () => {
               Our Core philosophy
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight font-display">
-              We design with <em className="not-italic text-muted-foreground">intent.</em>
+              We design with{" "}
+              <em className="not-italic text-muted-foreground">intent.</em>
             </h2>
           </div>
 
@@ -286,10 +315,15 @@ const Home = () => {
             <div className="space-y-8">
               <div className="philosophy-item philosophy-card liquid-glass rounded-3xl">
                 <div className="p-8 space-y-4">
-                  <span className="text-xs text-muted-foreground/60 tracking-wider uppercase font-mono">01 / SILENCE</span>
-                  <h3 className="text-2xl font-normal font-display text-foreground">Cognitive Clarity</h3>
+                  <span className="text-xs text-muted-foreground/60 tracking-wider uppercase font-mono">
+                    01 / SILENCE
+                  </span>
+                  <h3 className="text-2xl font-normal font-display text-foreground">
+                    Cognitive Clarity
+                  </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    We eliminate noise, unnecessary borders, and distracting animation layers. Your workspace should breathe.
+                    We eliminate noise, unnecessary borders, and distracting
+                    animation layers. Your workspace should breathe.
                   </p>
                 </div>
               </div>
@@ -315,10 +349,15 @@ const Home = () => {
 
               <div className="philosophy-item philosophy-card liquid-glass rounded-3xl">
                 <div className="p-8 space-y-4">
-                  <span className="text-xs text-muted-foreground/60 tracking-wider uppercase font-mono">02 / PHYSICS</span>
-                  <h3 className="text-2xl font-normal font-display text-foreground">Tactile Interaction</h3>
+                  <span className="text-xs text-muted-foreground/60 tracking-wider uppercase font-mono">
+                    02 / PHYSICS
+                  </span>
+                  <h3 className="text-2xl font-normal font-display text-foreground">
+                    Tactile Interaction
+                  </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    We render interfaces that react directly to touch and movement, utilizing WebGL-driven physics grids.
+                    We render interfaces that react directly to touch and
+                    movement, utilizing WebGL-driven physics grids.
                   </p>
                 </div>
               </div>
@@ -328,10 +367,15 @@ const Home = () => {
             <div className="space-y-8">
               <div className="philosophy-item philosophy-card liquid-glass rounded-3xl">
                 <div className="p-8 space-y-4">
-                  <span className="text-xs text-muted-foreground/60 tracking-wider uppercase font-mono">03 / TYPOGRAPHY</span>
-                  <h3 className="text-2xl font-normal font-display text-foreground">Extreme Contrast</h3>
+                  <span className="text-xs text-muted-foreground/60 tracking-wider uppercase font-mono">
+                    03 / TYPOGRAPHY
+                  </span>
+                  <h3 className="text-2xl font-normal font-display text-foreground">
+                    Extreme Contrast
+                  </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    We prioritize functional hierarchy, pairing structured body types with expressive serif headings.
+                    We prioritize functional hierarchy, pairing structured body
+                    types with expressive serif headings.
                   </p>
                 </div>
               </div>
@@ -348,7 +392,6 @@ const Home = () => {
         </div>
       </section>
 
- 
       {/* Section 5: Journal Showcase */}
       <section className="journal-section py-32 px-4 sm:px-6 md:px-8 relative z-10 bg-transparent">
         <div className="max-w-5xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -361,10 +404,12 @@ const Home = () => {
               <em className="not-italic text-muted-foreground">dispatches.</em>
             </h2>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-sm">
-              We write dispatches about design frameworks, minimalist architecture, and motion kinetics. Spin the 3D grid sphere to explore them.
+              We write dispatches about design frameworks, minimalist
+              architecture, and motion kinetics. Spin the 3D grid sphere to
+              explore them.
             </p>
             <button
-              onClick={() => triggerTransition('/journal')}
+              onClick={() => triggerTransition("/journal")}
               className="liquid-glass rounded-full px-8 py-3.5 text-xs uppercase tracking-widest text-foreground hover:scale-[1.05] active:scale-[0.98] transition-all duration-300 cursor-pointer inline-block"
             >
               Browse Journal
@@ -376,11 +421,8 @@ const Home = () => {
           </div>
         </div>
       </section>
-      
-
-
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

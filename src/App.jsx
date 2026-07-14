@@ -35,6 +35,7 @@ const App = () => {
   }, [pathname])
 
   const isHome = pathname === '/'
+  const isStudio = pathname === '/studio'
 
   return (
     <TransitionProvider>
@@ -53,14 +54,18 @@ const App = () => {
         <div
           className={`fixed inset-0 z-1 pointer-events-none transition-all duration-700 ease-in-out ${isHome
               ? 'bg-black/20 backdrop-blur-none'
+              : isStudio
+              ? 'bg-transparent backdrop-blur-none'
               : 'bg-background/85 backdrop-blur-[16px]'
             }`}
         />
 
-        {/* Global Interactive Image Trail */}
-        <div className="fixed inset-0 z-2 pointer-events-none overflow-hidden">
-          <ImageTrail items={trailImages} variant={2} />
-        </div>
+        {/* Global Interactive Image Trail - hidden on studio to avoid mouse hover conflicts */}
+        {!isStudio && (
+          <div className="fixed inset-0 z-2 pointer-events-none overflow-hidden">
+            <ImageTrail items={trailImages} variant={2} />
+          </div>
+        )}
 
         {/* Foreground Content */}
         <div className="relative z-10 min-h-screen flex flex-col justify-between">
@@ -74,7 +79,7 @@ const App = () => {
               <Route path="/contact" element={<Contact />} />
             </Routes>
           </main>
-          <Footer />
+          {!isStudio && <Footer />}
         </div>
 
         {/* Premium Awwwards transition overlay */}
