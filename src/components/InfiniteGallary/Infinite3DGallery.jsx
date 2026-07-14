@@ -2,7 +2,7 @@ import React, { useRef, useMemo, useState, useEffect, Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import { ReactLenis, useLenis } from "lenis/react";
-import { useTexture, Html } from "@react-three/drei";
+import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import gsap from "gsap";
 
@@ -80,43 +80,10 @@ const WORKING_IMAGES = [
   "https://images.unsplash.com/photo-1574169208507-84376144848b?q=80&w=1200&auto=format&fit=crop",
 ];
 
-const GALLERY_DATA = Array.from({ length: 18 }).map((_, i) => {
-  const titles = [
-    "CONCRETE VOID", "TENSION & FLOW", "LIQUID REFLECTION",
-    "BRUTALIST MONOLITH", "SILENT ARCHES", "TACTILE SHADOWS",
-    "KINETIC WATER", "GLASS METRICS", "SAND WAVES",
-    "PLASTER TEXTURE", "FUTURISTIC GRID", "CERAMIC STILLNESS",
-    "CURVED TIMBER", "STAIRCASE VOID", "SHADOW SHARDS",
-    "LIGHT CHANNELS", "REFRACTED GRID", "MONUMENTAL FLUTE"
-  ];
-  const descriptions = [
-    "A study of brutalist geometric intersections and light filtration.",
-    "Organic ceramic shapes capturing the dynamics of architectural stillness.",
-    "Glass highlights refracting light in dark virtual environments.",
-    "Monumental stone structures pairing aggressive structural geometries.",
-    "Repeating curved shapes creating visual rhythm and depth.",
-    "An exploration of extreme contrast using delicate hard shadows.",
-    "The frozen motion of water ripples mapped as a physical plane.",
-    "Distorted perspectives through modern corrugated glass cylinders.",
-    "Naturally occurring linear ridges sculpted by dessert wind currents.",
-    "Macro photographic capture of uneven lime-wash plaster textures.",
-    "Sleek metallic frames arranged in an immersive high-altitude grid.",
-    "Handcrafted earthenware vases aligned in perfect symmetry.",
-    "Laminated birch wood bent under intense thermal heat.",
-    "A downward spiraling concrete staircase framework structural void.",
-    "Sharp, angled sunlight slicing through window louvers gracefully.",
-    "Narrow vertical slot windows casting bright ambient glowing bands.",
-    "A mesh grid seen through thick, water-filled acrylic slabs.",
-    "Fluted columns rising up to form an abstract crown structure."
-  ];
-
-  return {
-    id: i,
-    title: titles[i],
-    desc: descriptions[i],
-    url: WORKING_IMAGES[i % WORKING_IMAGES.length],
-  };
-});
+const GALLERY_DATA = Array.from({ length: 18 }).map((_, i) => ({
+  id: i,
+  url: WORKING_IMAGES[i % WORKING_IMAGES.length],
+}));
 
 function wrapValue(val, min, max) {
   const range = max - min;
@@ -148,20 +115,71 @@ const CardShader = {
     uniform float uBendStrength;
     uniform float uCylinderRadius;
     uniform float uVelocity;
+    uniform float uHover;
+    uniform float uTime;
 
     out vec2 vUv;
     out vec3 vViewPosition;
     out float vDepth;
+    out vec3 vNormal;
+    out vec3 vWorldPos;
+
+    // Gerstner Wave function — produces rolling ocean-style displacement
+    // dir: wave propagation direction, steepness: sharpness of crests, wavelength: spatial period
+    vec3 gerstnerWave(vec2 dir, float steepness, float wavelength, vec2 p, float t, inout vec3 tangent, inout vec3 binormal) {
+      float k = 6.28318 / wavelength; // 2*PI / wavelength
+      float c = sqrt(9.8 / k);        // phase speed
+      vec2 d = normalize(dir);
+      float f = k * (dot(d, p) - c * t);
+      float a = steepness / k;         // amplitude
+
+      tangent += vec3(
+        -d.x * d.x * steepness * sin(f),
+         d.x * steepness * cos(f),
+        -d.x * d.y * steepness * sin(f)
+      );
+      binormal += vec3(
+        -d.x * d.y * steepness * sin(f),
+         d.y * steepness * cos(f),
+        -d.y * d.y * steepness * sin(f)
+      );
+
+      return vec3(
+        d.x * a * cos(f),
+        a * sin(f),
+        d.y * a * cos(f)
+      );
+    }
 
     void main() {
       vUv = uv;
       vec3 pos = position;
 
-      // Scroll velocity stretch response
+      // Scroll velocity stretch
       pos.z += sin(pos.y * 2.0) * uVelocity * 2.2;
 
-      // Fixed Cylindrical Curve computation 
-      // Bends perfectly independent of the local world-space matrix flip
+      // === GERSTNER WAVE DISTORTION ON HOVER ===
+      vec3 tangent = vec3(1.0, 0.0, 0.0);
+      vec3 binormal = vec3(0.0, 0.0, 1.0);
+      vec2 wavePos = position.xy * 2.0; // scale position into wave space
+
+      // Smooth flowing river currents and ocean swell wave vectors
+      // Wave A: diagonal rolling swell (dir(0.8, 0.6), steepness 0.55, wavelength 2.5)
+      vec3 wA = gerstnerWave(vec2(0.8, 0.6), 0.55, 2.5, wavePos, uTime * 1.8, tangent, binormal);
+      // Wave B: cross-interference ocean wave (dir(-0.2, 0.9), steepness 0.4, wavelength 1.6)
+      vec3 wB = gerstnerWave(vec2(-0.2, 0.9), 0.4, 1.6, wavePos, uTime * 2.2, tangent, binormal);
+      // Wave C: high-frequency river ripple (dir(0.5, -0.5), steepness 0.2, wavelength 0.8)
+      vec3 wC = gerstnerWave(vec2(0.5, -0.5), 0.2, 0.8, wavePos, uTime * 3.0, tangent, binormal);
+
+      // Distort the entire mesh directly including edges (no edgeMask)
+      vec3 totalWave = (wA + wB + wC) * uHover;
+      pos += totalWave * 0.28;
+
+      // Compute wave normal for specular highlights across the full card
+      vec3 waveNormal = normalize(cross(binormal, tangent));
+      vNormal = mix(vec3(0.0, 0.0, 1.0), waveNormal, uHover);
+
+      // Fixed Cylindrical Curve computation
       float theta = pos.x / uCylinderRadius;
       vec3 bentPos = pos;
       bentPos.x = uCylinderRadius * sin(theta);
@@ -172,6 +190,7 @@ const CardShader = {
       vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
       vViewPosition = mvPosition.xyz;
       vDepth = -mvPosition.z;
+      vWorldPos = (modelMatrix * vec4(pos, 1.0)).xyz;
 
       gl_Position = projectionMatrix * mvPosition;
     }
@@ -186,6 +205,8 @@ const CardShader = {
     in vec2 vUv;
     in vec3 vViewPosition;
     in float vDepth;
+    in vec3 vNormal;
+    in vec3 vWorldPos;
 
     out vec4 fragColor;
 
@@ -203,26 +224,40 @@ const CardShader = {
       float alpha = smoothstep(0.002, -0.002, d);
       if (alpha < 0.01) discard;
 
-      // Retained crisp mipmap calculation for background cards
+      // Depth-based mipmap blur for far cards
       float blurFactor = clamp((vDepth - 5.5) * 0.1, 0.0, 2.5);
       vec4 texColor = textureLod(uTexture, vUv, blurFactor);
 
-      // Light filtration vignette
+      // Card surface vignette
       float cardVig = smoothstep(0.85, 0.35, length(vUv - vec2(0.5)));
       vec3 col = texColor.rgb * mix(1.0, 0.45, (1.0 - cardVig) * 0.65);
 
-      // Gloss highlight effect
+      // === GERSTNER WAVE SPECULAR HIGHLIGHTS ===
+      // Compute specular reflection on wave crests (the bright white streaks in the reference)
+      vec3 viewDir = normalize(-vViewPosition);
+      vec3 lightDir = normalize(vec3(0.5, 1.0, 0.8)); // top-right key light
+      vec3 N = normalize(vNormal);
+      vec3 halfVec = normalize(lightDir + viewDir);
+      float specular = pow(max(dot(N, halfVec), 0.0), 64.0); // sharp, tight highlights
+      // Second light for cross reflections
+      vec3 lightDir2 = normalize(vec3(-0.3, 0.8, 0.5));
+      vec3 halfVec2 = normalize(lightDir2 + viewDir);
+      float specular2 = pow(max(dot(N, halfVec2), 0.0), 48.0);
+
+      float totalSpec = (specular * 0.9 + specular2 * 0.5) * uHover;
+      col += vec3(totalSpec);
+
+      // Subtle Fresnel rim glow on wave edges
+      float fresnel = pow(1.0 - max(dot(viewDir, N), 0.0), 3.0) * uHover * 0.3;
+      col += vec3(fresnel);
+
+      // Gloss highlight (subtle diagonal sweep when not hovered)
       float shineProgress = fract(uTime * 0.12);
       float shine = smoothstep(0.08, 0.0, abs(p.x - p.y * 1.3 - (shineProgress * 4.5 - 2.25)));
       col += vec3(shine * 0.18 * (1.0 - uHover));
 
-      // Border outline
-      float borderThickness = 0.005;
-      float borderMask = smoothstep(0.0015, -0.0015, abs(d + borderThickness) - borderThickness);
-      vec3 borderCol = vec3(1.0) * (0.2 + 0.6 * smoothstep(-0.3, 0.3, dot(normalize(-vViewPosition), vec3(0.0, 0.0, 1.0))));
-      col = mix(col, borderCol, borderMask * 0.4);
-
-      col = mix(col, col * 1.15 + vec3(0.06), uHover * 0.5);
+      // Hover brightness boost
+      col = mix(col, col * 1.15 + vec3(0.06), uHover * 0.35);
 
       fragColor = vec4(col, uOpacity * alpha);
     }
@@ -236,7 +271,6 @@ function ImageCard({ data, texture, scrollRef, velocityRef, isMobile, isTablet }
   const groupRef = useRef(null);
   const cardMatRef = useRef(null);
 
-  const [hovered, setHovered] = useState(false);
   const hoverVal = useRef({ value: 0 });
 
   const cardUniforms = useMemo(() => ({
@@ -302,15 +336,13 @@ function ImageCard({ data, texture, scrollRef, velocityRef, isMobile, isTablet }
 
   const handlePointerOver = (e) => {
     e.stopPropagation();
-    setHovered(true);
     document.body.style.cursor = "pointer";
-    gsap.to(hoverVal.current, { value: 1.0, duration: 0.5, ease: "power2.out" });
+    gsap.to(hoverVal.current, { value: 1.0, duration: 0.6, ease: "power2.out" });
   };
 
   const handlePointerOut = () => {
-    setHovered(false);
     document.body.style.cursor = "auto";
-    gsap.to(hoverVal.current, { value: 0.0, duration: 0.5, ease: "power2.out" });
+    gsap.to(hoverVal.current, { value: 0.0, duration: 0.8, ease: "power2.inOut" });
   };
 
   return (
@@ -320,7 +352,7 @@ function ImageCard({ data, texture, scrollRef, velocityRef, isMobile, isTablet }
       onPointerOut={handlePointerOut}
     >
       <mesh>
-        <planeGeometry args={[data.width, data.height, 32, 16]} />
+        <planeGeometry args={[data.width, data.height, 64, 48]} />
         <shaderMaterial
           ref={cardMatRef}
           glslVersion={THREE.GLSL3}
@@ -331,23 +363,6 @@ function ImageCard({ data, texture, scrollRef, velocityRef, isMobile, isTablet }
           side={THREE.DoubleSide} // FIXED: Forces Three.js to render meshes when rotated backwards
         />
       </mesh>
-
-      <Html
-        position={[0, 0, 0.02]}
-        center
-        distanceFactor={2.5}
-        className={`pointer-events-none select-none transition-all duration-500 transform ${hovered ? "opacity-100 scale-100" : "opacity-0 scale-95 translate-y-2"
-          }`}
-      >
-        <div className="w-52 p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md text-white font-sans text-center shadow-2xl">
-          <h4 className="font-mono text-[11px] font-bold tracking-widest uppercase mb-1 border-b border-white/10 pb-1">
-            {data.title}
-          </h4>
-          <p className="text-[10px] text-white/70 font-light leading-normal">
-            {data.desc}
-          </p>
-        </div>
-      </Html>
     </group>
   );
 }
