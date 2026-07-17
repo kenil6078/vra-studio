@@ -34,7 +34,7 @@ const SLIDES = [
 ];
 
 // ============================================================================
-// Clone of the Video's Cinematic Liquid Tear Shader
+// Cinematic Liquid Tear Shader
 // ============================================================================
 const CinematicMorphShader = {
   uniforms: {
@@ -59,7 +59,6 @@ const CinematicMorphShader = {
     uniform float uTime;
     uniform vec2 uResolution;
 
-    // Simplex Noise Generator for organic details
     vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
     float snoise(vec2 v){
       const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
@@ -86,52 +85,41 @@ const CinematicMorphShader = {
     void main() {
       vec2 uv = vUv;
       vec2 centeredUV = uv - 0.5;
-      
-      // Ripple intensity peaks at progress = 0.5
+
       float rippleIntensity = sin(uProgress * 3.14159265);
-      
-      // 1. Smooth Water Wave Distortion (oscillating sine/cosine waves inspired by reference)
-      // Height waves and width waves driven by progress and time
+
       float waveX = sin(uv.y * 12.0 + uTime * 5.0) * 0.12 * rippleIntensity;
       float waveY = cos(uv.x * 12.0 + uTime * 5.0) * 0.06 * rippleIntensity;
-      
+
       vec2 waveDisplacement = vec2(waveX, waveY);
-      
-      // Smooth zooms: zoom in slightly on Tex1, zoom from out to normal on Tex2
+
       vec2 uv1 = centeredUV * (1.0 - uProgress * 0.1) + 0.5 + waveDisplacement;
       vec2 uv2 = centeredUV * (1.1 - (1.0 - uProgress) * 0.1) + 0.5 + waveDisplacement;
-      
-      // 2. Liquid Wave Sweep Mask
-      // Diagonal sweep combined with wave displacement and noise
+
       float sweep = uv.y + uv.x * 0.5;
       float noiseVal = snoise(uv * 4.0 + uTime * 0.25);
       float sweepFront = sweep + (noiseVal * 0.12 + waveX) * rippleIntensity;
-      
-      // Map uProgress (0.0 to 1.0) to range [1.5, -0.5] for clean full transitions
+
       float threshold = mix(1.5, -0.5, uProgress);
       float mask = smoothstep(threshold - 0.15, threshold + 0.15, sweepFront);
-      
-      // 3. Subtle, Premium Chromatic Aberration
+
       float splitDist = rippleIntensity * 0.012;
-      
-      // Sample Tex1 with split
+
       float r1 = texture2D(uTex1, uv1 + vec2(splitDist, 0.0)).r;
       float g1 = texture2D(uTex1, uv1).g;
       float b1 = texture2D(uTex1, uv1 - vec2(splitDist, 0.0)).b;
       vec4 color1 = vec4(r1, g1, b1, 1.0);
-      
-      // Sample Tex2 with split
+
       float r2 = texture2D(uTex2, uv2 + vec2(splitDist, 0.0)).r;
       float g2 = texture2D(uTex2, uv2).g;
       float b2 = texture2D(uTex2, uv2 - vec2(splitDist, 0.0)).b;
       vec4 color2 = vec4(r2, g2, b2, 1.0);
-      
-      // 4. Final Color Blend + Subtle Film Grain
+
       vec4 finalColor = mix(color1, color2, mask);
-      
+
       float grain = fract(sin(dot(uv, vec2(12.9898, 78.233)) + uTime) * 43758.5453) * 0.02;
       finalColor.rgb -= grain;
-      
+
       gl_FragColor = finalColor;
     }
   `,
@@ -158,7 +146,6 @@ function Scene({ currentIndex, nextIndex, progressRef }) {
     if (materialRef.current) {
       materialRef.current.uniforms.uTex1.value = textures[currentIndex];
       materialRef.current.uniforms.uTex2.value = textures[nextIndex];
-      // Reset the progress uniform and ref value synchronously with the textures update
       materialRef.current.uniforms.uProgress.value = 0;
       progressRef.current.value = 0;
     }
@@ -173,15 +160,11 @@ function Scene({ currentIndex, nextIndex, progressRef }) {
 
     const intensity = Math.sin(progressRef.current.value * Math.PI);
 
-    // Handheld subtle camera motion
     state.camera.position.x = Math.sin(time * 0.2) * 0.02;
     state.camera.position.y = Math.cos(time * 0.15) * 0.02;
-
-    // Depth push during the heavy transition phase
     state.camera.position.z = THREE.MathUtils.lerp(1, 1.15, intensity);
     state.camera.lookAt(0, 0, 0);
 
-    // Geometry expansion
     if (meshRef.current) {
       meshRef.current.scale.setScalar(1 + intensity * 0.04);
       meshRef.current.rotation.z = intensity * 0.015;
@@ -190,7 +173,6 @@ function Scene({ currentIndex, nextIndex, progressRef }) {
 
   return (
     <mesh ref={meshRef}>
-      {/* FULLSCREEN FIX: Scaled geometry by 1.5 to prevent edge clipping during camera Z-push */}
       <planeGeometry
         args={[viewport.width * 1.5, viewport.height * 1.5, 64, 64]}
       />
@@ -249,10 +231,23 @@ export default function LuxuryHeroEngine() {
   const { lenis } = useTransitionContext();
   const [index, setIndex] = useState(0);
   const [nextIndex, setNextIndex] = useState(1);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const progressRef = useRef({ value: 0 });
+  const masterTlRef = useRef(null);
+  const holdTimerRef = useRef(null);
+  const mountedRef = useRef(true);
+
+  // Timing constants — single source of truth, no more mismatched
+  // setInterval vs timeline durations.
+  const HOLD_MS = 2600; // how long a slide sits still before transitioning
+  const EXIT_DUR = 0.55; // title exit
+  const SHADER_DUR = 1.3; // shader morph duration
+  const SHADER_OVERLAP = 0.15; // shader starts slightly after exit begins
+  const ENTRANCE_DELAY = 0.05; // gap after shader completes before new title enters
+  const ENTRANCE_DUR = 1.15; // title entrance
 
   useEffect(() => {
+    mountedRef.current = true;
+
     // Brand header entrance
     gsap.fromTo(
       ".brand-char",
@@ -285,9 +280,8 @@ export default function LuxuryHeroEngine() {
       delay: 1.4,
       ease: "power3.out",
     });
-  }, []);
 
-  useEffect(() => {
+    // First title entrance (initial mount, index 0)
     gsap.fromTo(
       ".title-char",
       { y: "120%", rotationX: -90, opacity: 0 },
@@ -295,55 +289,98 @@ export default function LuxuryHeroEngine() {
         y: "0%",
         rotationX: 0,
         opacity: 1,
-        duration: 1.2,
-        stagger: 0.05,
+        duration: ENTRANCE_DUR,
+        stagger: 0.045,
+        ease: "power4.out",
+        delay: 0.65,
+      },
+    );
+
+    scheduleNextTransition();
+
+    return () => {
+      mountedRef.current = false;
+      clearTimeout(holdTimerRef.current);
+      if (masterTlRef.current) masterTlRef.current.kill();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const scheduleNextTransition = () => {
+    clearTimeout(holdTimerRef.current);
+    holdTimerRef.current = setTimeout(() => {
+      runTransition();
+    }, HOLD_MS);
+  };
+
+  const runTransition = () => {
+    if (!mountedRef.current) return;
+    if (masterTlRef.current) masterTlRef.current.kill();
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        if (!mountedRef.current) return;
+        setIndex((prev) => (prev + 1) % SLIDES.length);
+        setNextIndex((prev) => (prev + 1) % SLIDES.length);
+        scheduleNextTransition();
+      },
+    });
+    masterTlRef.current = tl;
+
+    // 1. Exit the current title cleanly first.
+    tl.to(
+      ".title-char",
+      {
+        y: "-120%",
+        rotationX: 90,
+        opacity: 0,
+        duration: EXIT_DUR,
+        stagger: 0.02,
+        ease: "power4.in",
+      },
+      0,
+    );
+
+    // 2. Shader morph — starts just before exit finishes so the liquid
+    //    sweep and the outgoing letters feel connected, not staggered apart.
+    tl.to(
+      progressRef.current,
+      {
+        value: 1.0,
+        duration: SHADER_DUR,
+        ease: "power2.inOut",
+      },
+      EXIT_DUR - SHADER_OVERLAP,
+    );
+
+    // 3. The React state swap (index/nextIndex) happens in onComplete, right
+    //    as the shader finishes — so the new title node mounts exactly when
+    //    the background image swap has visually resolved. The entrance
+    //    animation for `.title-char` is driven by the index-change effect
+    //    below, so it can't fire before the DOM for the new title exists.
+  };
+
+  // New title entrance — fires whenever `index` changes (i.e. after the
+  // transition timeline swaps slides), fully decoupled from the exit tween
+  // so there is no timing collision between the two.
+  useEffect(() => {
+    const entranceTl = gsap.timeline({ delay: ENTRANCE_DELAY });
+    entranceTl.fromTo(
+      ".title-char",
+      { y: "120%", rotationX: -90, opacity: 0 },
+      {
+        y: "0%",
+        rotationX: 0,
+        opacity: 1,
+        duration: ENTRANCE_DUR,
+        stagger: 0.045,
         ease: "power4.out",
       },
     );
+    return () => entranceTl.kill();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
-  useEffect(() => {
-    const slideDuration = 5500;
-    const interval = setInterval(() => {
-      if (isTransitioning) return;
-      setIsTransitioning(true);
-
-      const tl = gsap.timeline({
-        onComplete: () => {
-          setIndex((prev) => (prev + 1) % SLIDES.length);
-          setNextIndex((prev) => (prev + 1) % SLIDES.length);
-          setIsTransitioning(false);
-        },
-      });
-
-      tl.to(
-        ".title-char",
-        {
-          y: "-120%",
-          rotationX: 90,
-          opacity: 0,
-          duration: 0.5,
-          stagger: 0.02,
-          ease: "power4.in",
-        },
-        0,
-      );
-
-      tl.to(
-        progressRef.current,
-        {
-          value: 1.0,
-          duration: 1.2,
-          ease: "power3.inOut",
-        },
-        0.1,
-      );
-    }, slideDuration);
-
-    return () => clearInterval(interval);
-  }, [isTransitioning]);
-
-  // FULLSCREEN FIX: 100dvh guarantees the container fits exactly to the mobile/desktop viewport without overflow
   return (
     <div className="relative w-full h-[100dvh] overflow-hidden bg-[#050505] text-[#eaeaea] font-body">
       {/* 3D WebGL Background Layer */}
@@ -366,10 +403,8 @@ export default function LuxuryHeroEngine() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.6)_100%)] mix-blend-multiply" />
       </div>
 
-      {/* HTML UI Layer - Unified, with pointer events handled */}
+      {/* HTML UI Layer */}
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none">
-        
-        {/* Title layer with blend mode */}
         <div className="flex flex-col items-center justify-center mix-blend-overlay">
           <div style={{ perspective: "1000px" }} className="mb-4 md:mb-5 flex items-center justify-center">
             <SplitText
@@ -388,15 +423,14 @@ export default function LuxuryHeroEngine() {
           </div>
         </div>
 
-        {/* Subtext and Button (Interactive) */}
         <div className="mt-8 flex flex-col items-center max-w-2xl text-center px-6 pointer-events-auto">
-          <p 
+          <p
             className="hero-sub text-white/90 text-sm sm:text-base md:text-lg leading-relaxed opacity-0 transform translate-y-6 font-body font-normal"
             style={{ textShadow: "0 2px 12px rgba(0,0,0,0.5)" }}
           >
             We're designing tools for deep thinkers, bold creators, and quiet rebels. Amid the chaos, we build digital spaces for sharp focus and inspired work.
           </p>
-          
+
           <button
             onClick={() => {
               const target = document.querySelector(".zoom-sticky-wrapper");
@@ -412,7 +446,6 @@ export default function LuxuryHeroEngine() {
             Begin Journey
           </button>
         </div>
-
       </div>
     </div>
   );
