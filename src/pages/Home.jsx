@@ -8,6 +8,7 @@ import InfiniteMenu from "../components/InfiniteMenu/InfiniteMenu";
 import HorizontalStory from "../components/HorizontalStory/HorizontalStory";
 import TypographyStoryScroll from "../components/Typography/TypographyStory";
 import LuxuryHeroEngine from "../components/HeroSection/LuxuryHeroEngine";
+// import TypographyStory from "../components/HorizontalStory/TypographyStory";
 // import CylinderHero from "../components/Shapes/CylinderHero";
 
 gsap.registerPlugin(ScrollTrigger);
