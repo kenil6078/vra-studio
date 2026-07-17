@@ -27,7 +27,7 @@ const PANELS = [
     shape: { bg: 'rgba(255,255,255,0.04)', size: '55vmax', x: '30%', y: '35%' },
   },
   {
-    headline: 'VRA-STUDIO®',
+    headline: 'VRA-Studio®',
     image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
     shape: { bg: 'rgba(255,255,255,0.05)', size: '60vmax', x: '50%', y: '50%' },
   },
@@ -87,9 +87,12 @@ function buildImageMasks(panelCount) {
 }
 
 function SplitHeadline({ text, panelIndex }) {
-  const words = text.split(' ')
+  const hasReg = text.endsWith('®')
+  const cleanText = hasReg ? text.slice(0, -1) : text
+  const words = cleanText.split(' ')
+  
   return (
-    <h2 className="hstory-headline">
+    <h2 className={`hstory-headline flex items-center justify-center flex-wrap ${panelIndex === 4 ? 'italic font-normal' : ''}`}>
       {words.map((word, wi) => (
         <span key={wi} className="inline-block whitespace-nowrap mr-[0.25em]">
           {word.split('').map((char, ci) => (
@@ -104,6 +107,11 @@ function SplitHeadline({ text, panelIndex }) {
           ))}
         </span>
       ))}
+      {hasReg && (
+        <sup className="text-xs md:text-sm lg:text-base font-sans font-medium text-white/50 align-super self-start mt-[-0.2em] md:mt-[-0.4em]">
+          ®
+        </sup>
+      )}
     </h2>
   )
 }
@@ -231,11 +239,13 @@ export default function HorizontalStory() {
           if (i < panelCount - 1) {
             const exitAt = start + panelSlot - OVERLAP - CHAR_EXIT
 
-            masterTl.to(
+            masterTl.fromTo(
               chars,
+              { y: '0%', rotateX: 0, scale: 1 },
               {
                 y: '-120%',
                 rotateX: -45,
+                scale: 0.9,
                 duration: CHAR_EXIT,
                 stagger: CHAR_STAGGER * 0.8,
                 ease: 'power3.in',
@@ -244,14 +254,16 @@ export default function HorizontalStory() {
               exitAt,
             )
 
-            masterTl.to(
+            masterTl.fromTo(
               `.hstory-counter-${i}`,
+              { y: 0 },
               { y: -10, duration: 0.02, ease: 'power2.in', immediateRender: false },
               exitAt,
             )
 
-            masterTl.to(
+            masterTl.fromTo(
               `.hstory-img-${i}`,
+              { clipPath: 'inset(0% 0 0 0 round 24px)' },
               {
                 clipPath: 'inset(0 0 100% 0 round 24px)',
                 duration: 0.04,

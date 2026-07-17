@@ -7,6 +7,8 @@ import GridDistortion from "../components/GridDistortion/GridDistortion";
 import InfiniteMenu from "../components/InfiniteMenu/InfiniteMenu";
 import HorizontalStory from "../components/HorizontalStory/HorizontalStory";
 import TypographyStoryScroll from "../components/Typography/TypographyStory";
+import LuxuryHeroEngine from "../components/HeroSection/LuxuryHeroEngine";
+// import CylinderHero from "../components/Shapes/CylinderHero";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -37,86 +39,10 @@ const Home = () => {
   const mainRef = useRef(null);
   const textRef = useRef(null);
   const revealRef = useRef(null);
-
-  const titleText = "Where dreams rise through the silence.";
-  const titleWords = titleText.split(" ");
-
-  const subText =
-    "We're designing tools for deep thinkers, bold creators, and quiet rebels. Amid the chaos, we build digital spaces for sharp focus and inspired work.";
-  const subTextWords = subText.split(" ");
+  const contentRef = useRef(null);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      // 1. Hero Title & Paragraph entrance animation (Slide Up into Mask)
-      gsap.from(".hero-word", {
-        opacity: 0,
-        y: "110%",
-        rotate: 3,
-        stagger: 0.08,
-        duration: 1.2,
-        ease: "power4.out",
-      });
-
-      gsap.from(".hero-sub-word", {
-        opacity: 0,
-        y: "110%",
-        stagger: 0.012,
-        duration: 0.8,
-        delay: 0.4,
-        ease: "power3.out",
-      });
-
-      gsap.from(".hero-cta", {
-        opacity: 0,
-        y: 20,
-        delay: 1.0,
-        duration: 0.8,
-        ease: "power3.out",
-      });
-
-      // 2. Hero Text Scroll-Linked Exit Mask Effect (Slides Up/Away on scroll)
-      gsap.fromTo(
-        ".hero-word",
-        {
-          y: "0%",
-          rotate: 0,
-          opacity: 1,
-        },
-        {
-          scrollTrigger: {
-            trigger: ".hero-section",
-            start: "top top",
-            end: "bottom 30%",
-            scrub: true,
-          },
-          y: "-110%",
-          rotate: -3,
-          opacity: 0,
-          ease: "none",
-          immediateRender: false,
-        },
-      );
-
-      gsap.fromTo(
-        ".hero-sub-word",
-        {
-          y: "0%",
-          opacity: 1,
-        },
-        {
-          scrollTrigger: {
-            trigger: ".hero-section",
-            start: "top top",
-            end: "bottom 30%",
-            scrub: true,
-          },
-          y: "-110%",
-          opacity: 0,
-          ease: "none",
-          immediateRender: false,
-        },
-      );
-
       // 3. Sticky Scroll-tied Zoom text & Clip-Path reveal
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -131,14 +57,23 @@ const Home = () => {
 
       tl.fromTo(
         textRef.current,
+        { scale: 1 },
         {
-          scale: 1,
-          opacity: 1,
+          scale: 30,
+          duration: 0.35,
+          ease: "power2.in",
+          immediateRender: false,
         },
+        0,
+      );
+
+      tl.fromTo(
+        textRef.current,
+        { opacity: 1 },
         {
-          scale: 75,
           opacity: 0,
-          ease: "power2.inOut",
+          duration: 0.22,
+          ease: "power1.out",
           immediateRender: false,
         },
         0,
@@ -151,6 +86,7 @@ const Home = () => {
         },
         {
           clipPath: "circle(120% at 50% 50%)",
+          duration: 0.8,
           ease: "power2.inOut",
           immediateRender: false,
           onUpdate: function () {
@@ -160,7 +96,23 @@ const Home = () => {
             }
           },
         },
-        0,
+        0.2,
+      );
+
+      tl.fromTo(
+        contentRef.current,
+        {
+          scale: 0.93,
+          opacity: 0,
+        },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.55,
+          ease: "power2.out",
+          immediateRender: false,
+        },
+        0.35,
       );
 
       // 4. Stagger philosophy grid elements (both text & images)
@@ -197,52 +149,8 @@ const Home = () => {
       ref={mainRef}
       className="relative w-full min-h-screen overflow-x-hidden bg-black/10"
     >
-      {/* Section 1: Hero Section */}
-      <section className="hero-section relative min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8">
-        <div className="relative z-10 flex flex-col items-center justify-center text-center max-w-7xl mx-auto pt-32 pb-32">
-          <h1 className="text-5xl sm:text-7xl md:text-8xl font-normal leading-[0.95] tracking-[-2.46px] text-foreground font-display">
-            {titleWords.map((word, index) => (
-              <span
-                key={index}
-                className="inline-block overflow-hidden mr-3 md:mr-4 py-1"
-              >
-                <span className="hero-word inline-block origin-bottom-left">
-                  {word === "dreams" || word === "silence." ? (
-                    <em className="not-italic text-muted-foreground">{word}</em>
-                  ) : (
-                    word
-                  )}
-                </span>
-              </span>
-            ))}
-          </h1>
 
-          <p className="hero-sub text-muted-foreground text-base sm:text-lg max-w-2xl mt-8 leading-relaxed">
-            {subTextWords.map((word, index) => (
-              <span
-                key={index}
-                className="inline-block overflow-hidden mr-1.5 py-0.5"
-              >
-                <span className="hero-sub-word inline-block origin-bottom-left">
-                  {word}
-                </span>
-              </span>
-            ))}
-          </p>
-
-          <button
-            onClick={() => {
-              const target = document.querySelector(".zoom-sticky-wrapper");
-              if (target) {
-                target.scrollIntoView({ behavior: "smooth" });
-              }
-            }}
-            className="hero-cta liquid-glass rounded-full px-12 py-4.5 text-xs uppercase tracking-widest text-foreground mt-12 hover:scale-[1.05] active:scale-[0.98] transition-all duration-300 cursor-pointer shadow-[0_0_20px_rgba(255,255,255,0.05)] hover:shadow-[0_0_35px_rgba(255,255,255,0.12)]"
-          >
-            Begin Journey
-          </button>
-        </div>
-      </section>
+      <LuxuryHeroEngine />
 
       <TypographyStoryScroll />
 
@@ -255,7 +163,7 @@ const Home = () => {
 
           {/* Revealable Section 3 Content inside CSS Circular Clip Path */}
           <div ref={revealRef} className="reveal-content-container">
-            <div className="w-full h-full flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 py-16">
+            <div ref={contentRef} className="w-full h-full flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 py-16">
               <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                 <div className="lg:col-span-5 space-y-6 text-left">
                   <span className="text-xs uppercase tracking-widest text-muted-foreground bg-white/5 px-3 py-1 rounded-full border border-white/5">
