@@ -184,9 +184,11 @@ export const PageTransition = () => {
                   className="transition-cell-bg"
                   style={{
                     backgroundImage: `url(${screenshot})`,
-                    backgroundPosition: `${-leftPercent}vw ${-topPercent}vh`,
-                    width: '100vw',
-                    height: '100vh',
+                    backgroundSize: '100% 100%',
+                    width: `${grid.cols * 100}%`,
+                    height: `${grid.rows * 100}%`,
+                    left: `${-col * 100}%`,
+                    top: `${-row * 100}%`,
                   }}
                 />
               )}

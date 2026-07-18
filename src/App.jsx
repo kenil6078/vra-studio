@@ -50,7 +50,7 @@ const App = () => {
           disablePictureInPicture
           className="fixed inset-0 h-full w-full object-cover pointer-events-none select-none"
         >
-          <source src="/sample_bg.mp4" type="video/mp4" />
+          <source src="https://www.pexels.com/download/video/16664585/" type="video/mp4" />
         </video>
         {/* Dynamic Ambient Blur/Overlay depending on active page */}
         <div

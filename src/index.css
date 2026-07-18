@@ -370,16 +370,13 @@ body.freeze-scroll {
   /* fallback background color */
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
   /* very soft shadow while tiles move */
+  width: calc(100% + 1.5px);
+  height: calc(100% + 1.5px);
 }
 
 .transition-cell-bg {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
   background-repeat: no-repeat;
-  background-size: 100vw 100vh;
   pointer-events: none;
   will-change: transform;
 }
