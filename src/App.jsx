@@ -7,6 +7,7 @@ import Studio from './pages/Studio'
 import About from './pages/About'
 import Journal from './pages/Journal'
 import Contact from './pages/Contact'
+import NotFound from './pages/NotFound'
 import Footer from './components/Footer/Footer'
 import { TransitionProvider } from './components/Transition/TransitionContext'
 import { PageTransition } from './components/Transition/PageTransition'
@@ -74,6 +75,7 @@ const App = () => {
               <Route path="/about" element={<About />} />
               <Route path="/journal" element={<Journal />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
           {!isStudio && <Footer />}
