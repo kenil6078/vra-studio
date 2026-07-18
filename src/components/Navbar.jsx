@@ -12,14 +12,41 @@ const navLinks = [
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const [visible, setVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
   const navigate = useNavigate()
   const location = useLocation()
   const { triggerTransition } = useTransitionContext()
 
-  // Close mobile menu on route change
+  // Close mobile menu and show navbar on route change
   useEffect(() => {
     setIsOpen(false)
+    setVisible(true)
   }, [location.pathname])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+
+      // If mobile dropdown menu is open, keep navbar visible
+      if (isOpen) {
+        setLastScrollY(currentScrollY)
+        return
+      }
+
+      // Hide when scrolling down, show when scrolling up
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setVisible(false)
+      } else {
+        setVisible(true)
+      }
+
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [lastScrollY, isOpen])
 
   const handleTransitionLink = (e, path) => {
     e.preventDefault()
@@ -28,7 +55,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 px-4 py-4 md:py-6">
+    <nav className={`fixed top-0 left-0 right-0 z-50 px-4 py-4 md:py-6 transition-transform duration-500 ease-in-out ${visible ? 'translate-y-0' : '-translate-y-full'}`}>
       {/* Floating Pill Container */}
       <div className="max-w-6xl mx-auto">
         <div className="liquid-glass rounded-full shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)]">
