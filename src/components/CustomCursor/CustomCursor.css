@@ -1,0 +1,40 @@
+/* Custom Cursor styling */
+.custom-cursor-dot,
+.custom-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.custom-cursor-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #ffffff;
+  mix-blend-mode: difference;
+}
+
+.custom-cursor-ring {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  background-color: transparent;
+}
+
+/* Hide default cursor on desktop devices with cursor capabilities */
+@media (pointer: fine) {
+  html,
+  body, 
+  a, 
+  button, 
+  [role="button"],
+  .cursor-pointer,
+  input,
+  textarea,
+  select {
+    cursor: none !important;
+  }
+}

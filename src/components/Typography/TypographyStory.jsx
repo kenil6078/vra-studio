@@ -8,11 +8,6 @@
  * 3. ZERO vertical gaps: Tightly packed stacking.
  * 4. Text remains strictly horizontal (no rotation).
  *
- * UPDATED:
- * - Staggered vertical image cards now fade away smoothly after focus shifts.
- * - Ultra-smooth cinematic physics eases added for high-end feel.
- * - Text fields remain strictly anchored above all moving graphic vectors.
- *
  * Stack: React 19 · GSAP 3.15+ · ScrollTrigger · MotionPathPlugin
  * ─────────────────────────────────────────────────────────────
  */
@@ -42,6 +37,7 @@ const RIGHT_PATH = [
 
 const DUR = 1.0;
 const GAP = 0.045;
+const TINY_GAP = 0.06;
 
 const LEFT_WORDS = [
   { text: "CORE-SITE", depth: "bg" },
@@ -68,6 +64,14 @@ const RIGHT_WORDS = [
   { text: "SYSTEM", depth: "bg" },
   { text: "LABS", depth: "bg" },
 ].map((w, i) => ({ ...w, start: i * GAP, dur: DUR, path: RIGHT_PATH }));
+
+const TINY_LIST_WORDS = [
+  { text: "MOTION DESIGN" },
+  { text: "MICRO INTERACTIONS" },
+  { text: "TYPE SYSTEM" },
+  { text: "CREATIVE DIRECTION" },
+  { text: "設計語言" }
+].map((w, i) => ({ ...w, start: 0.1 + (i * TINY_GAP), dur: DUR }));
 
 const ALL_WORDS = [...LEFT_WORDS, ...RIGHT_WORDS];
 
@@ -96,7 +100,7 @@ function Chars({ text }) {
 }
 
 export default function TypographyStoryScroll({
-  scrollLength = "450vh", // Enhanced container scroll depth window for dynamic easing resolution
+  scrollLength = "450vh",
   className = "",
   images = null,
   imageCaption = null,
@@ -104,6 +108,7 @@ export default function TypographyStoryScroll({
   const rootRef = useRef(null);
   const stageRef = useRef(null);
   const wordRefs = useRef([]);
+  const tinyWordRefs = useRef([]);
   const imgWrapRef = useRef(null);
   const slideRefs = useRef([]);
   const captionTextRefs = useRef([]);
@@ -172,7 +177,40 @@ export default function TypographyStoryScroll({
         );
       });
 
-      // ── 2. Premium Vertical Staggered Slide Reveals with Dynamic Exits ──
+      // ── 2. SVG-linked Snake Motion for Tiny Technical List Text ──
+      tinyWordRefs.current.forEach((entry) => {
+        if (!entry) return;
+        const { el, cfg } = entry;
+
+        master.to(
+          el,
+          {
+            motionPath: {
+              path: "#tss-tiny-snake-path",
+              autoRotate: false,
+              align: "#tss-tiny-snake-path",
+              alignOrigin: [0.5, 0.5]
+            },
+            duration: cfg.dur,
+            ease: "none"
+          },
+          cfg.start
+        );
+
+        master.fromTo(
+          el,
+          { opacity: 0 },
+          { opacity: 0.65, duration: cfg.dur * 0.2, ease: "power1.out" },
+          cfg.start
+        );
+        master.to(
+          el,
+          { opacity: 0, duration: cfg.dur * 0.2, ease: "power1.in" },
+          cfg.start + cfg.dur - (cfg.dur * 0.2)
+        );
+      });
+
+      // ── 3. Premium Vertical Staggered Slide Reveals with Dynamic Exits ──
       if (imgWrapRef.current && slideRefs.current.length) {
         gsap.set(imgWrapRef.current, { opacity: 0, y: 50 });
         master.fromTo(imgWrapRef.current, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.08, ease: "power3.out" }, 0.02);
@@ -184,7 +222,7 @@ export default function TypographyStoryScroll({
         const slideshowSpan = slideshowEnd - slideshowStart;
         const perSlide = slideshowSpan / slideCount;
 
-        const transitionDur = perSlide * 0.75; // Increased duration for maximum fluid smoothness
+        const transitionDur = perSlide * 0.75;
 
         slideRefs.current.forEach((slideEl, i) => {
           if (!slideEl) return;
@@ -192,7 +230,6 @@ export default function TypographyStoryScroll({
           const captionEl = captionTextRefs.current[i];
           const slideStart = slideshowStart + i * perSlide;
 
-          // Initial position initialization
           if (i === 0) {
             gsap.set(slideEl, { yPercent: 0, autoAlpha: 1, scale: 1, opacity: 1 });
             if (imgEl) gsap.set(imgEl, { scale: 1 });
@@ -202,7 +239,6 @@ export default function TypographyStoryScroll({
             if (captionEl) gsap.set(captionEl, { autoAlpha: 0 });
           }
 
-          // --- ENTERING TIMELINE TRACK ---
           if (i > 0) {
             master.fromTo(
               slideEl,
@@ -213,7 +249,7 @@ export default function TypographyStoryScroll({
                 scale: 1,
                 opacity: 1,
                 duration: transitionDur,
-                ease: "power4.out" // Ultra premium snappy drop deceleration curve
+                ease: "power4.out"
               },
               slideStart
             );
@@ -228,8 +264,6 @@ export default function TypographyStoryScroll({
             }
           }
 
-          // --- EXITING TIMELINE TRACK ("Baad mein hide hona") ---
-          // When a card finishes sitting in full view, fade it out to opacity 0 as the next one takes over
           const nextStart = slideStart + perSlide;
 
           if (i < slideCount - 1) {
@@ -241,9 +275,9 @@ export default function TypographyStoryScroll({
               master.to(
                 nextSlideEl,
                 {
-                  yPercent: -60, // Shifts out cleanly upwards
+                  yPercent: -60,
                   scale: 0.85,
-                  opacity: 0, // Fades completely to clean up background space
+                  opacity: 0,
                   duration: transitionDur,
                   ease: "power3.inOut"
                 },
@@ -266,7 +300,7 @@ export default function TypographyStoryScroll({
         trigger: rootRef.current,
         start: "top top",
         end: "bottom bottom",
-        scrub: 1.1, // Adjusted scrub rate for high performance drag tracking responsiveness
+        scrub: 1.1,
         pin: stage,
         pinSpacing: true,
         anticipatePin: 1,
@@ -319,13 +353,26 @@ export default function TypographyStoryScroll({
           <span className="tss-eyebrow-right">BRAND IDENTITY</span>
         </div>
 
-        {/* Small Fixed Tech List on Right */}
-        <div className="tss-tiny-list">
-          <span>MOTION DESIGN</span>
-          <span>MICRO INTERACTIONS</span>
-          <span>TYPE SYSTEM</span>
-          <span>CREATIVE DIRECTION</span>
-          <span>設計語言</span>
+        {/* Invisible SVG path container guiding our technical small text track */}
+        <svg className="tss-hidden-vector-track" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path
+            id="tss-tiny-snake-path"
+            d="M 80,110 Q 65,80 82,50 Q 95,20 75,-10"
+            fill="none"
+          />
+        </svg>
+
+        {/* Dynamic Technical Word Field (Animate-on-scroll list) */}
+        <div className="tss-tiny-moving-field">
+          {TINY_LIST_WORDS.map((cfg, i) => (
+            <span
+              key={i + cfg.text}
+              className="tss-tiny-moving-item"
+              ref={(el) => { if (el) tinyWordRefs.current[i] = { el, cfg }; }}
+            >
+              {cfg.text}
+            </span>
+          ))}
         </div>
 
         {/* Dotted Line Divider (Left) */}
@@ -334,7 +381,7 @@ export default function TypographyStoryScroll({
           <span></span><span></span><span></span><span></span><span></span>
         </div>
 
-        {/* HTML Word Field (LIFTED Z-INDEX LAYERS - FLOATS COMFORTABLY ABOVE CARDS) */}
+        {/* HTML Word Field */}
         <div className="tss-field">
           {ALL_WORDS.map((cfg, i) => (
             <div
@@ -364,7 +411,6 @@ export default function TypographyStoryScroll({
                 data-slide-img
               />
 
-              {/* Caption text riding along the curved SVG path */}
               <svg
                 className="tss-image-caption-svg"
                 viewBox="0 0 320 120"
@@ -390,7 +436,7 @@ export default function TypographyStoryScroll({
           ))}
         </div>
 
-        {/* Bottom Left "N" Dot Logo */}
+        {/* Bottom Left Logo */}
         <div className="tss-dot-logo">
           <svg viewBox="0 0 40 60" fill="currentColor">
             <circle cx="8" cy="8" r="4" /><circle cx="8" cy="20" r="4" /><circle cx="8" cy="32" r="4" /><circle cx="8" cy="44" r="4" /><circle cx="8" cy="56" r="4" />
@@ -452,12 +498,35 @@ export default function TypographyStoryScroll({
         .tss-eyebrow-title { font-size: 0.85rem; letter-spacing: 0.12em; color: rgba(255, 255, 255, 0.7); }
         .tss-eyebrow-subtitle { font-size: 0.7rem; letter-spacing: 0.05em; }
 
-        .tss-tiny-list {
-          position: absolute; right: 18%; top: 40%;
-          display: flex; flex-direction: column; gap: 6px;
+        /* Hidden vector track layout for absolute path references */
+        .tss-hidden-vector-track {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          visibility: hidden;
+        }
+
+        /* Moving fields layout for the technical text specifications */
+        .tss-tiny-moving-field {
+          position: absolute;
+          inset: 0;
+          z-index: 36;
+          pointer-events: none;
+        }
+
+        .tss-tiny-moving-item {
+          position: absolute;
+          transform: translate(-50%, -50%);
+          white-space: nowrap;
           font-family: "Helvetica Neue", Arial, sans-serif;
-          font-size: 0.65rem; color: rgba(255, 255, 255, 0.6);
-          letter-spacing: 0.05em; z-index: 35; text-align: left;
+          font-size: 0.7rem;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 0.75);
+          letter-spacing: 0.06em;
+          text-align: left;
+          will-change: transform, opacity;
         }
         
         .tss-dotted-line {
@@ -515,7 +584,6 @@ export default function TypographyStoryScroll({
           will-change: transform;
         }
 
-        /* Arc SVG Curved Text Track Styling */
         .tss-image-caption-svg {
           position: absolute; 
           top: 55%; 
@@ -555,7 +623,8 @@ export default function TypographyStoryScroll({
         .tss-scrollcue span { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 0.6rem; letter-spacing: 0.15em; font-weight: 500; }
 
         @media (max-width: 860px) {
-          .tss-eyebrow-group, .tss-tiny-list, .tss-dotted-line { display: none; }
+          .tss-eyebrow-group, .tss-dotted-line { display: none; }
+          .tss-tiny-moving-item { font-size: 0.55rem; }
           .tss-slide-card { width: 210px; }
           .tss-bg { font-size: 1rem; }
           .tss-mid { font-size: 1.4rem; }

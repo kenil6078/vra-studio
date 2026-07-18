@@ -7,26 +7,11 @@ import Studio from './pages/Studio'
 import About from './pages/About'
 import Journal from './pages/Journal'
 import Contact from './pages/Contact'
-import ImageTrail from './components/ImageTrail/ImageTrail'
 import Footer from './components/Footer/Footer'
 import { TransitionProvider } from './components/Transition/TransitionContext'
 import { PageTransition } from './components/Transition/PageTransition'
 import Grainient from './components/Grainient/Grainient'
-
-const trailImages = [
-  'https://picsum.photos/300/300?grayscale&random=101',
-  'https://picsum.photos/300/300?grayscale&random=102',
-  'https://picsum.photos/300/300?grayscale&random=103',
-  'https://picsum.photos/300/300?grayscale&random=104',
-  'https://picsum.photos/300/300?grayscale&random=105',
-  'https://picsum.photos/300/300?grayscale&random=106',
-  'https://picsum.photos/300/300?grayscale&random=107',
-  'https://picsum.photos/300/300?grayscale&random=108',
-  'https://picsum.photos/300/300?grayscale&random=109',
-  'https://picsum.photos/300/300?grayscale&random=110',
-  'https://picsum.photos/300/300?grayscale&random=111',
-  'https://picsum.photos/300/300?grayscale&random=112'
-]
+import CustomCursor from './components/CustomCursor/CustomCursor'
 
 const App = () => {
   const { pathname } = useLocation()
@@ -78,12 +63,6 @@ const App = () => {
             }`}
         />
 
-        {/* Global Interactive Image Trail - hidden on studio to avoid mouse hover conflicts */}
-        {!isStudio && (
-          <div className="fixed inset-0 z-2 pointer-events-none overflow-hidden">
-            <ImageTrail items={trailImages} variant={2} />
-          </div>
-        )}
 
         {/* Foreground Content */}
         <div className="relative z-10 min-h-screen flex flex-col justify-between">
@@ -105,6 +84,9 @@ const App = () => {
 
         {/* Initial loading screen with progress indicator */}
         <InitialLoader />
+
+        {/* Global Custom Cursor */}
+        <CustomCursor />
       </div>
     </TransitionProvider>
   )
