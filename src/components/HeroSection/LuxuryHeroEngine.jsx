@@ -18,7 +18,7 @@ const SLIDES = [
   },
   {
     image:
-      "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260602_150333_a4a8610a-01b1-406d-8a61-9b107ee818a7.png&w=1920&q=85",
+      "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260701_081051_370f3ba8-678f-4e98-8d04-cbbc22281be6.png&w=1920&q=85",
     title: "SILENCE",
   },
   {
