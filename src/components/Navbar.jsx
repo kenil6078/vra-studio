@@ -51,8 +51,7 @@ const Navbar = () => {
                   end={link.end}
                   onClick={(e) => handleTransitionLink(e, link.path)}
                   className={({ isActive }) =>
-                    `relative py-1 text-sm tracking-wide font-medium transition-colors duration-300 group no-underline ${
-                      isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+                    `relative py-1 text-sm tracking-wide font-medium transition-colors duration-300 group no-underline ${isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                     }`
                   }
                 >
@@ -61,9 +60,8 @@ const Navbar = () => {
                       <span>{link.name}</span>
                       {/* Animated sliding underline */}
                       <span
-                        className={`absolute bottom-0 left-0 w-full h-[1.5px] bg-white transition-transform duration-300 origin-left ${
-                          isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
-                        }`}
+                        className={`absolute bottom-0 left-0 w-full h-[1.5px] bg-white transition-transform duration-300 origin-left ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                          }`}
                       />
                     </>
                   )}
@@ -86,19 +84,16 @@ const Navbar = () => {
               aria-label="Toggle menu"
             >
               <span
-                className={`block w-5 h-[1.5px] bg-foreground transition-all duration-300 origin-center ${
-                  isOpen ? 'rotate-45 translate-y-[6.5px]' : ''
-                }`}
+                className={`block w-5 h-[1.5px] bg-foreground transition-all duration-300 origin-center ${isOpen ? 'rotate-45 translate-y-[6.5px]' : ''
+                  }`}
               />
               <span
-                className={`block w-5 h-[1.5px] bg-foreground transition-all duration-300 ${
-                  isOpen ? 'opacity-0' : ''
-                }`}
+                className={`block w-5 h-[1.5px] bg-foreground transition-all duration-300 ${isOpen ? 'opacity-0' : ''
+                  }`}
               />
               <span
-                className={`block w-5 h-[1.5px] bg-foreground transition-all duration-300 origin-center ${
-                  isOpen ? '-rotate-45 -translate-y-[6.5px]' : ''
-                }`}
+                className={`block w-5 h-[1.5px] bg-foreground transition-all duration-300 origin-center ${isOpen ? '-rotate-45 -translate-y-[6.5px]' : ''
+                  }`}
               />
             </button>
           </div>
@@ -107,11 +102,10 @@ const Navbar = () => {
 
       {/* Mobile Dropdown Panel */}
       <div
-        className={`md:hidden transition-all duration-300 ease-in-out ${
-          isOpen
+        className={`md:hidden transition-all duration-300 ease-in-out ${isOpen
             ? 'max-h-[380px] opacity-100 translate-y-0 mt-3'
             : 'max-h-0 opacity-0 -translate-y-4 pointer-events-none'
-        }`}
+          }`}
         style={{ overflow: 'hidden' }}
       >
         <div className="liquid-glass rounded-2xl px-6 py-6 flex flex-col gap-4 shadow-2xl">
@@ -125,8 +119,7 @@ const Navbar = () => {
                 handleTransitionLink(e, link.path)
               }}
               className={({ isActive }) =>
-                `text-sm font-medium transition-colors duration-200 py-1.5 no-underline ${
-                  isActive ? 'text-foreground border-l-2 border-white pl-2' : 'text-muted-foreground hover:text-foreground pl-0'
+                `text-sm font-medium transition-colors duration-200 py-1.5 no-underline ${isActive ? 'text-foreground border-l-2 border-white pl-2' : 'text-muted-foreground hover:text-foreground pl-0'
                 }`
               }
             >

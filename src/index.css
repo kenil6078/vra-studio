@@ -302,14 +302,17 @@ body {
     width: 100% !important;
     height: auto;
   }
+
   .hstory-svg-wrap {
     display: none;
   }
+
   .hstory-panel {
     width: 100%;
     height: 100svh;
     min-height: 100svh;
   }
+
   .hstory-headline {
     font-size: clamp(2rem, 10vw, 4rem);
     max-width: 95vw;
@@ -443,30 +446,28 @@ html.lenis body {
   width: 260vmax;
   height: 260vmax;
   transform: translate(-50%, -50%);
-  background: conic-gradient(
-    from 0deg at 50% 50%,
-    #040d1a 0deg,
-    #0a1e3d 18deg,
-    #0f3052 36deg,
-    #0d3d59 54deg,
-    #0b4e75 72deg,
-    #075f91 90deg,
-    #0072b2 108deg,
-    #0086cc 126deg,
-    #009be6 144deg,
-    #00b0ff 162deg,
-    #00c4ff 180deg,
-    #00d8ff 198deg,
-    #00e8f0 216deg,
-    #00d8d0 234deg,
-    #009be6 252deg,
-    #0072b2 270deg,
-    #075f91 288deg,
-    #0b4e75 306deg,
-    #0d3d59 324deg,
-    #0a1e3d 342deg,
-    #040d1a 360deg
-  );
+  background: conic-gradient(from 0deg at 50% 50%,
+      #040d1a 0deg,
+      #0a1e3d 18deg,
+      #0f3052 36deg,
+      #0d3d59 54deg,
+      #0b4e75 72deg,
+      #075f91 90deg,
+      #0072b2 108deg,
+      #0086cc 126deg,
+      #009be6 144deg,
+      #00b0ff 162deg,
+      #00c4ff 180deg,
+      #00d8ff 198deg,
+      #00e8f0 216deg,
+      #00d8d0 234deg,
+      #009be6 252deg,
+      #0072b2 270deg,
+      #075f91 288deg,
+      #0b4e75 306deg,
+      #0d3d59 324deg,
+      #0a1e3d 342deg,
+      #040d1a 360deg);
   opacity: 0;
   will-change: transform, opacity;
   z-index: 1;
@@ -477,13 +478,11 @@ html.lenis body {
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: radial-gradient(
-    ellipse 70% 70% at 50% 50%,
-    transparent 0%,
-    rgba(4, 10, 20, 0.3) 50%,
-    rgba(4, 10, 20, 0.75) 80%,
-    rgba(4, 10, 20, 0.95) 100%
-  );
+  background: radial-gradient(ellipse 70% 70% at 50% 50%,
+      transparent 0%,
+      rgba(4, 10, 20, 0.3) 50%,
+      rgba(4, 10, 20, 0.75) 80%,
+      rgba(4, 10, 20, 0.95) 100%);
   pointer-events: none;
   opacity: 0;
   will-change: opacity;
@@ -509,12 +508,10 @@ html.lenis body {
   width: 80vmin;
   height: 80vmin;
   transform: translate(-50%, -50%);
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(0, 180, 255, 0.12) 0%,
-    rgba(0, 120, 200, 0.06) 40%,
-    transparent 70%
-  );
+  background: radial-gradient(circle at 50% 50%,
+      rgba(0, 180, 255, 0.12) 0%,
+      rgba(0, 120, 200, 0.06) 40%,
+      transparent 70%);
   border-radius: 50%;
   z-index: 4;
   pointer-events: none;

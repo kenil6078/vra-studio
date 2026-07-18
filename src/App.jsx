@@ -53,8 +53,8 @@ const App = () => {
         {/* Dynamic Ambient Blur/Overlay depending on active page */}
         <div
           className={`fixed inset-0 z-1 pointer-events-none transition-all duration-700 ease-in-out ${isHome
-              ? 'bg-black/20 backdrop-blur-none'
-              : isStudio
+            ? 'bg-black/20 backdrop-blur-none'
+            : isStudio
               ? 'bg-transparent backdrop-blur-none'
               : 'bg-background/85 backdrop-blur-[16px]'
             }`}
