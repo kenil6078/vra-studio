@@ -8,7 +8,7 @@ import InfiniteMenu from "../components/InfiniteMenu/InfiniteMenu";
 import HorizontalStory from "../components/HorizontalStory/HorizontalStory";
 import TypographyStoryScroll from "../components/Typography/TypographyStory";
 import LuxuryHeroEngine from "../components/HeroSection/LuxuryHeroEngine";
-// import TypographyStory from "../components/HorizontalStory/TypographyStory";
+import TypographyStory from "../components/HorizontalStory/TypographyStory";
 // import CylinderHero from "../components/Shapes/CylinderHero";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -153,6 +153,10 @@ const Home = () => {
 
       <LuxuryHeroEngine />
 
+
+      {/* Typography Story Scroll */}
+      {/* <TypographyStory /> */}
+
       <TypographyStoryScroll />
 
       {/* Section 2: Sticky Zoom-Through Transition */}
@@ -205,6 +209,9 @@ const Home = () => {
 
       {/* Cinematic Horizontal Storytelling */}
       <HorizontalStory />
+
+     {/* Typography Story Scroll
+      <TypographyStory /> */}
 
       {/* Section 4: Philosophy & Media Grid */}
       <section className="philosophy-section py-32 px-4 sm:px-6 md:px-8 relative z-10 bg-transparent">

@@ -132,8 +132,8 @@ export default function HeroPixelTypography() {
         
         /* Interactive Digital Glow */
         text:hover .pixel-char {
-          fill: #f97316; /* Orange brand color */
-          text-shadow: 0px 0px 10px #f97316;
+          fill: #464842; /* Orange brand color */
+        //text-shadow: 0px 0px 10px #f97316;
         }
       `}</style>
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import TypographyStory from "../components/HorizontalStory/TypographyStory"
+// import TypographyStory from "../components/HorizontalStory/TypographyStory"
 
 const About = () => {
   return (
@@ -58,9 +58,6 @@ const About = () => {
           </div>
         </div>
       </div>
-
-      {/* Typography Story Scroll */}
-      <TypographyStory />
     </div>
   )
 }
