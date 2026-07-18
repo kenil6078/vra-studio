@@ -103,8 +103,8 @@ const Navbar = () => {
       {/* Mobile Dropdown Panel */}
       <div
         className={`md:hidden transition-all duration-300 ease-in-out ${isOpen
-            ? 'max-h-[380px] opacity-100 translate-y-0 mt-3'
-            : 'max-h-0 opacity-0 -translate-y-4 pointer-events-none'
+          ? 'max-h-[380px] opacity-100 translate-y-0 mt-3'
+          : 'max-h-0 opacity-0 -translate-y-4 pointer-events-none'
           }`}
         style={{ overflow: 'hidden' }}
       >

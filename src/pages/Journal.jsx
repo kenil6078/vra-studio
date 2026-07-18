@@ -46,6 +46,141 @@ const items = [
     borderColor: '#8B5CF6',
     gradient: 'linear-gradient(180deg, #8B5CF6, #000000)',
     url: 'https://google.com/'
+  },
+  {
+    image: 'https://picsum.photos/600/600?grayscale&random=1',
+    title: 'The Art of Digital Silence',
+    subtitle: 'Exploring how minimizing cognitive load in design fosters greater creativity and concentration.',
+    handle: '@silence',
+    borderColor: '#A8864F',
+    gradient: 'linear-gradient(180deg, #A8864F, #000000)',
+    url: 'https://google.com/'
+  },
+  {
+    image: 'https://picsum.photos/600/600?grayscale&random=2',
+    title: 'WebGL Physics & Attention',
+    subtitle: 'Finding the balance between engaging interactive physics and distracting visual clutter.',
+    handle: '@physics',
+    borderColor: '#3B82F6',
+    gradient: 'linear-gradient(180deg, #3B82F6, #000000)',
+    url: 'https://google.com/'
+  },
+  {
+    image: 'https://picsum.photos/600/600?grayscale&random=3',
+    title: 'Designing Beyond Screen',
+    subtitle: 'How spatial interfaces, typography, and contrast shape the workflow of next-generation developers.',
+    handle: '@spatial',
+    borderColor: '#10B981',
+    gradient: 'linear-gradient(180deg, #10B981, #000000)',
+    url: 'https://google.com/'
+  },
+  {
+    image: 'https://picsum.photos/600/600?grayscale&random=4',
+    title: 'Cognitive UI Architecture',
+    subtitle: 'Building software tools that respect human attention limits and enhance developer throughput.',
+    handle: '@cognition',
+    borderColor: '#EF4444',
+    gradient: 'linear-gradient(180deg, #EF4444, #000000)',
+    url: 'https://google.com/'
+  },
+  {
+    image: 'https://picsum.photos/600/600?grayscale&random=5',
+    title: 'Aesthetics of Simplicity',
+    subtitle: 'Why visual clarity, dark modes, and high-fidelity typography create professional environments.',
+    handle: '@simplicity',
+    borderColor: '#8B5CF6',
+    gradient: 'linear-gradient(180deg, #8B5CF6, #000000)',
+    url: 'https://google.com/'
+  },
+  {
+    image: 'https://picsum.photos/600/600?grayscale&random=1',
+    title: 'The Art of Digital Silence',
+    subtitle: 'Exploring how minimizing cognitive load in design fosters greater creativity and concentration.',
+    handle: '@silence',
+    borderColor: '#A8864F',
+    gradient: 'linear-gradient(180deg, #A8864F, #000000)',
+    url: 'https://google.com/'
+  },
+  {
+    image: 'https://picsum.photos/600/600?grayscale&random=2',
+    title: 'WebGL Physics & Attention',
+    subtitle: 'Finding the balance between engaging interactive physics and distracting visual clutter.',
+    handle: '@physics',
+    borderColor: '#3B82F6',
+    gradient: 'linear-gradient(180deg, #3B82F6, #000000)',
+    url: 'https://google.com/'
+  },
+  {
+    image: 'https://picsum.photos/600/600?grayscale&random=3',
+    title: 'Designing Beyond Screen',
+    subtitle: 'How spatial interfaces, typography, and contrast shape the workflow of next-generation developers.',
+    handle: '@spatial',
+    borderColor: '#10B981',
+    gradient: 'linear-gradient(180deg, #10B981, #000000)',
+    url: 'https://google.com/'
+  },
+  {
+    image: 'https://picsum.photos/600/600?grayscale&random=4',
+    title: 'Cognitive UI Architecture',
+    subtitle: 'Building software tools that respect human attention limits and enhance developer throughput.',
+    handle: '@cognition',
+    borderColor: '#EF4444',
+    gradient: 'linear-gradient(180deg, #EF4444, #000000)',
+    url: 'https://google.com/'
+  },
+  {
+    image: 'https://picsum.photos/600/600?grayscale&random=5',
+    title: 'Aesthetics of Simplicity',
+    subtitle: 'Why visual clarity, dark modes, and high-fidelity typography create professional environments.',
+    handle: '@simplicity',
+    borderColor: '#8B5CF6',
+    gradient: 'linear-gradient(180deg, #8B5CF6, #000000)',
+    url: 'https://google.com/'
+  },
+  {
+    image: 'https://picsum.photos/600/600?grayscale&random=1',
+    title: 'The Art of Digital Silence',
+    subtitle: 'Exploring how minimizing cognitive load in design fosters greater creativity and concentration.',
+    handle: '@silence',
+    borderColor: '#A8864F',
+    gradient: 'linear-gradient(180deg, #A8864F, #000000)',
+    url: 'https://google.com/'
+  },
+  {
+    image: 'https://picsum.photos/600/600?grayscale&random=2',
+    title: 'WebGL Physics & Attention',
+    subtitle: 'Finding the balance between engaging interactive physics and distracting visual clutter.',
+    handle: '@physics',
+    borderColor: '#3B82F6',
+    gradient: 'linear-gradient(180deg, #3B82F6, #000000)',
+    url: 'https://google.com/'
+  },
+  {
+    image: 'https://picsum.photos/600/600?grayscale&random=3',
+    title: 'Designing Beyond Screen',
+    subtitle: 'How spatial interfaces, typography, and contrast shape the workflow of next-generation developers.',
+    handle: '@spatial',
+    borderColor: '#10B981',
+    gradient: 'linear-gradient(180deg, #10B981, #000000)',
+    url: 'https://google.com/'
+  },
+  {
+    image: 'https://picsum.photos/600/600?grayscale&random=4',
+    title: 'Cognitive UI Architecture',
+    subtitle: 'Building software tools that respect human attention limits and enhance developer throughput.',
+    handle: '@cognition',
+    borderColor: '#EF4444',
+    gradient: 'linear-gradient(180deg, #EF4444, #000000)',
+    url: 'https://google.com/'
+  },
+  {
+    image: 'https://picsum.photos/600/600?grayscale&random=5',
+    title: 'Aesthetics of Simplicity',
+    subtitle: 'Why visual clarity, dark modes, and high-fidelity typography create professional environments.',
+    handle: '@simplicity',
+    borderColor: '#8B5CF6',
+    gradient: 'linear-gradient(180deg, #8B5CF6, #000000)',
+    url: 'https://google.com/'
   }
 ]
 

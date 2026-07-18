@@ -210,7 +210,7 @@ const Home = () => {
       {/* Cinematic Horizontal Storytelling */}
       <HorizontalStory />
 
-     {/* Typography Story Scroll
+      {/* Typography Story Scroll
       <TypographyStory /> */}
 
       {/* Section 4: Philosophy & Media Grid */}

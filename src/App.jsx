@@ -43,13 +43,15 @@ const App = () => {
         {/* Global Cinematic Video Background */}
         <video
           autoPlay
-          loop
           muted
+          loop
           playsInline
-          className="fixed inset-0 w-full h-full object-cover z-0 pointer-events-none"
-          src="/sample_bg.mp4"
-        />
-
+          preload="auto"
+          disablePictureInPicture
+          className="fixed inset-0 h-full w-full object-cover pointer-events-none select-none"
+        >
+          <source src="/sample_bg.mp4" type="video/mp4" />
+        </video>
         {/* Dynamic Ambient Blur/Overlay depending on active page */}
         <div
           className={`fixed inset-0 z-1 pointer-events-none transition-all duration-700 ease-in-out ${isHome

@@ -105,9 +105,8 @@ const GridDistortion = ({ grid = 15, mouse = 0.1, strength = 0.15, relaxation = 
     const handleResize = () => {
       if (!container || !renderer || !camera) return;
 
-      const rect = container.getBoundingClientRect();
-      const width = rect.width;
-      const height = rect.height;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
 
       if (width === 0 || height === 0) return;
 

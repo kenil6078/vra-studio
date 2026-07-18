@@ -5,10 +5,11 @@
  * CORRECTED for "Snake Moving" effect:
  * 1. Words follow an S-Curve (snake) motion path.
  * 2. Words share the exact same path and speed but are staggered
- * in time, making them travel like connected train cars.
+ *    in time, making them travel like connected train cars.
  * 3. ZERO vertical gaps: Tightly packed stacking.
  * 4. Text remains strictly horizontal (no rotation).
  *
+ * MODIFIED: Background made fully transparent and black UI accents removed.
  * Stack: React 19 · GSAP 3.15+ · ScrollTrigger · MotionPathPlugin
  * ─────────────────────────────────────────────────────────────
  */
@@ -20,29 +21,24 @@ import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 
 gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
 
-/* ────────────────────────────────────────────────────────────
-   SNAKE PATH CONFIGURATION
-   Creates a smooth weaving line down the screen.
-   ──────────────────────────────────────────────────────────── */
 const LEFT_PATH = [
-  { x: 0.1, y: 1.15 }, // Start bottom-left
-  { x: 0.25, y: 0.85 }, // Weave right
-  { x: 0.02, y: 0.5 }, // Weave left
-  { x: 0.25, y: 0.15 }, // Weave right
-  { x: 0.1, y: -0.2 }, // Exit top-left
+  { x: 0.1, y: 1.15 },
+  { x: 0.25, y: 0.85 },
+  { x: 0.02, y: 0.5 },
+  { x: 0.25, y: 0.15 },
+  { x: 0.1, y: -0.2 },
 ];
 
 const RIGHT_PATH = [
-  { x: 0.9, y: 1.15 }, // Start bottom-right
-  { x: 0.75, y: 0.85 }, // Weave left
-  { x: 0.98, y: 0.5 }, // Weave right
-  { x: 0.75, y: 0.15 }, // Weave left
-  { x: 0.9, y: -0.2 }, // Exit top-right
+  { x: 0.9, y: 1.15 },
+  { x: 0.75, y: 0.85 },
+  { x: 0.98, y: 0.5 },
+  { x: 0.75, y: 0.15 },
+  { x: 0.9, y: -0.2 },
 ];
 
-// Timing interval to perfectly stack words vertically
 const DUR = 1.0;
-const GAP = 0.045; // Adjust this slightly if gaps appear based on your font size
+const GAP = 0.045;
 
 const LEFT_WORDS = [
   { text: "CORE-SITE", depth: "bg" },
@@ -120,7 +116,6 @@ export default function TypographyStoryScroll({
         const chars = el.querySelectorAll("[data-char]");
         const { opacityMax } = DEPTH_STYLE[cfg.depth];
 
-        // Convert normalized coordinates to pixel paths dynamically
         const pts = cfg.path.map((p) => ({ x: p.x * W, y: p.y * H }));
 
         gsap.set(el, { x: pts[0].x, y: pts[0].y, opacity: 0 });
@@ -129,7 +124,6 @@ export default function TypographyStoryScroll({
         const wordStart = cfg.start;
         const wordDur = cfg.dur;
 
-        // The Snake Motion: curviness applies the S-curve, ease "none" keeps them stacked like a train
         master.to(
           el,
           {
@@ -140,7 +134,6 @@ export default function TypographyStoryScroll({
           wordStart,
         );
 
-        // Opacity mapping (Fast fade in to keep the block solid)
         master
           .fromTo(
             el,
@@ -158,7 +151,6 @@ export default function TypographyStoryScroll({
             wordStart + wordDur - wordDur * 0.15,
           );
 
-        // Character reveals (Flat, no 3D rotation, just sliding up)
         master.fromTo(
           chars,
           { yPercent: 100, autoAlpha: 0 },
@@ -184,7 +176,6 @@ export default function TypographyStoryScroll({
         );
       });
 
-      // Center image subtle scale
       if (imgRef.current) {
         gsap.set(imgRef.current, { opacity: 0, scale: 0.96 });
         master.fromTo(
@@ -287,16 +278,8 @@ export default function TypographyStoryScroll({
 
         {/* Dotted Line Divider (Left) */}
         <div className="tss-dotted-line">
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
         </div>
 
         {/* HTML Word Field */}
@@ -368,13 +351,18 @@ export default function TypographyStoryScroll({
 
       <style>{`
         .tss-root { 
-          position: relative; width: 100%; 
-          background: radial-gradient(circle at center, #262626 0%, #111111 60%, #050505 100%);
+          position: relative; 
+          width: 100%; 
+          /* REMOVED: Dark radial gradient background */
+          background: transparent;
         }
 
         .tss-stage {
-          position: relative; width: 100%; height: 100vh;
-          overflow: hidden; color: #f5f3ee;
+          position: relative; 
+          width: 100%; 
+          height: 100vh;
+          overflow: hidden; 
+          color: #f5f3ee;
         }
 
         /* --- UI Chrome --- */
@@ -382,8 +370,14 @@ export default function TypographyStoryScroll({
           position: absolute; top: 24px; left: 50%; transform: translateX(-50%);
           display: flex; align-items: center; gap: 40px;
           padding: 12px 24px; border-radius: 4px;
-          background: #111111; z-index: 10;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+          /* CHANGED: Swapped solid #111111 for a sleek frosted transparent glass look */
+          background: rgba(255, 255, 255, 0.08); 
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          z-index: 10;
+          /* CHANGED: Lightened shadow profile for transparent blending */
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
         .tss-nav-icon { width: 16px; height: 16px; color: #f5f3ee; }
         .tss-nav-logo { width: 20px; height: 20px; color: #f5f3ee; }
@@ -427,7 +421,7 @@ export default function TypographyStoryScroll({
           display: inline-flex; white-space: nowrap;
           font-family: "Helvetica Neue", Arial, sans-serif;
           pointer-events: none;
-          line-height: 1; /* Keep the bounding box extremely tight */
+          line-height: 1; 
           will-change: transform, opacity;
         }
 
@@ -446,7 +440,9 @@ export default function TypographyStoryScroll({
         }
         .tss-image {
           position: relative; width: 320px; aspect-ratio: 4 / 3;
-          overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+          overflow: hidden; 
+          /* CHANGED: Smoothed out the dynamic wrapper overlay shadow */
+          box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
         .tss-image-img { width: 100%; height: 100%; object-fit: cover; }
         .tss-image-placeholder {
